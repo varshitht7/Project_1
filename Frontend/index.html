@@ -1,0 +1,58 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>E-commerce Chatbot</title>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 20px; }
+    #chat { border: 1px solid #ccc; padding: 10px; max-width: 600px; height: 400px; overflow-y: auto; }
+    .bot { color: blue; margin-bottom: 10px; }
+    .user { color: green; margin-bottom: 10px; }
+  </style>
+</head>
+<body>
+  <h1>Chat with our E-commerce Bot</h1>
+  <div id="chat"></div>
+  <input type="text" id="userInput" placeholder="Ask something..." style="width: 500px;">
+  <button onclick="sendMessage()">Send</button>
+
+  <script>
+    const chatDiv = document.getElementById('chat');
+
+    function appendMessage(sender, text) {
+      const messageDiv = document.createElement('div');
+      messageDiv.className = sender;
+      messageDiv.textContent = `${sender === 'user' ? 'You' : 'Bot'}: ${text}`;
+      chatDiv.appendChild(messageDiv);
+      chatDiv.scrollTop = chatDiv.scrollHeight;
+    }
+
+    async function sendMessage() {
+      const input = document.getElementById('userInput');
+      const text = input.value.trim();
+      if (!text) return;
+
+      appendMessage('user', text);
+      input.value = '';
+
+      if (text.toLowerCase().includes('top products')) {
+        try {
+          const response = await fetch('http://127.0.0.1:8000/top-products');
+          const data = await response.json();
+
+          let reply = 'Top Products:\n';
+          data.forEach(p => {
+            reply += `• ${p.name} (${p.brand}) - ₹${p.retail_price.toFixed(2)} [Sold: ${p.purchase_count}]\n`;
+          });
+          appendMessage('bot', reply);
+        } catch (err) {
+          appendMessage('bot', "Sorry, couldn't fetch data from the backend.");
+        }
+      } else {
+        appendMessage('bot', "I can show you 'top products' if you ask.");
+      }
+    }
+  </script>
+</body>
+</html>
