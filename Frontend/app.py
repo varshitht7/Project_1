@@ -15,11 +15,6 @@ def get_top_products():
     """Calculates the top 5 most sold products."""
     order_items_df = ecommerce_data['order_items']
     products_df = ecommerce_data['products']
-    distribution_items_df = ecommerce_data['distribution_items']
-    inventory_items_df = ecommerce_data['inventory_items']
-    orders_df = ecommerce_data['orders']
-    users_df = users['users']
-    
     
     # Count sales per product
     product_sales = order_items_df.groupby('product_id').size().reset_index(name='sales_count')
